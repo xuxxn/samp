@@ -1,0 +1,99 @@
+# ========================================
+# .gitignore for samp VST project (JUCE)
+# ========================================
+
+# Build directories
+build/
+builds/
+Builds/
+cmake-build-*/
+out/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.xcworkspace/
+xcuserdata/
+
+# Compiled files
+*.exe
+*.dll
+*.so
+*.dylib
+*.vst3
+*.app
+*.component
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+*.cache
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# JUCE specific
+JuceLibraryCode/
+*.jucer.bak
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+
+# Installer output
+Installer/Output/
+*.exe  # Except source .exe if needed
+
+# Updater build
+Updater/build/
+Updater/cmake-build-*/
+
+# Backup files
+*.backup
+*.bak
+
+# User-specific settings
+*.user
+*.suo
+*.sdf
+*.opensdf
+
+# Windows
+*.exp
+*.ilk
+*.pdb
+*.idb
+
+# macOS
+*.dSYM/
+
+# Debug/Release folders
+Debug/
+Release/
+x64/
+Win32/
+
+# ========================================
+# IMPORTANT: Keep these files
+# ========================================
+!version.txt
+!CHANGELOG.md
+!README.md
+!.github/
+
+# ========================================
+# Git LFS (if using large audio files)
+# ========================================
+# *.wav filter=lfs diff=lfs merge=lfs -text
+# *.aif filter=lfs diff=lfs merge=lfs -text

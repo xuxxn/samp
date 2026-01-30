@@ -1,0 +1,81 @@
+ 
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    name: Build Windows VST3
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+      
+      - name: Configure CMake
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -A x64
+      
+      - name: Build Plugin
+        run: |
+          cmake --build build --config Release
+      
+      - name: Build Updater
+        run: |
+          cd Updater
+          cmake -B build -G "Visual Studio 17 2022" -A x64
+          cmake --build build --config Release
+          cd ..
+      
+      - name: Package files
+        run: |
+          mkdir release_files
+          Copy-Item "build/samp_artefacts/Release/VST3/samp.vst3" -Destination "release_files/" -Recurse
+          Copy-Item "Updater/build/Release/Updater.exe" -Destination "release_files/"
+          Compress-Archive -Path release_files/* -DestinationPath "samp-windows-x64.zip"
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: samp-windows-x64
+          path: samp-windows-x64.zip
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-windows]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: samp-windows-x64
+      
+      - name: Get version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: samp v${{ steps.get_version.outputs.VERSION }}
+          body: "See CHANGELOG.md for details"
+          draft: false
+          prerelease: false
+          files: |
+            samp-windows-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
